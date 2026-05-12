@@ -1,0 +1,138 @@
+local Lyrical = Instance.new("ScreenGui")
+Lyrical.Name = "c00lgui_17_PERCENT"
+Lyrical.Parent = game:GetService("CoreGui")
+
+local MainFrame = Instance.new("Frame")
+MainFrame.Parent = Lyrical
+MainFrame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+MainFrame.Position = UDim2.new(0.3, 0, 0.1, 0)
+MainFrame.Size = UDim2.new(0, 300, 0, 420)
+MainFrame.Active = true
+MainFrame.Draggable = true
+
+local UIStroke = Instance.new("UIStroke")
+UIStroke.Parent = MainFrame
+UIStroke.Color = Color3.fromRGB(255, 0, 0)
+UIStroke.Thickness = 3
+
+local Title = Instance.new("TextLabel")
+Title.Parent = MainFrame
+Title.Size = UDim2.new(1, 0, 0, 35)
+Title.Text = "c00lgui - 17% SLOW LOOP"
+Title.TextColor3 = Color3.fromRGB(255, 0, 0)
+Title.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+
+local assetID = "rbxassetid://158118263"
+local audioID = "rbxassetid://104181508980428"
+
+local function createBtn(name, pos, color)
+    local btn = Instance.new("TextButton")
+    btn.Parent = MainFrame
+    btn.Text = name
+    btn.Position = pos
+    btn.Size = UDim2.new(0, 130, 0, 35)
+    btn.BackgroundColor3 = color or Color3.fromRGB(35, 35, 35)
+    btn.TextColor3 = Color3.fromRGB(255, 255, 255)
+    btn.Font = Enum.Font.SourceSansBold
+    return btn
+end
+
+-- Layout Tombol
+local SkyBtn = createBtn("Set Skybox", UDim2.new(0.05, 0, 0.12, 0))
+local AudBtn = createBtn("Audio 17% Loop", UDim2.new(0.52, 0, 0.12, 0))
+local DecBtn = createBtn("Decal Spam", UDim2.new(0.05, 0, 0.25, 0), Color3.fromRGB(100, 0, 0))
+local WSBtn = createBtn("WS 100", UDim2.new(0.52, 0, 0.25, 0))
+local NoclipBtn = createBtn("Noclip", UDim2.new(0.05, 0, 0.38, 0))
+local InfJumpBtn = createBtn("Inf Jump", UDim2.new(0.52, 0, 0.38, 0))
+local ESPBtn = createBtn("ESP Player", UDim2.new(0.05, 0, 0.51, 0), Color3.fromRGB(0, 100, 0))
+local HintBtn = createBtn("Hint Loop", UDim2.new(0.52, 0, 0.51, 0), Color3.fromRGB(100, 100, 0))
+local TPBtn = createBtn("Random TP", UDim2.new(0.05, 0, 0.64, 0), Color3.fromRGB(0, 0, 150))
+
+-- LOGIC --
+
+-- 1. Skybox
+SkyBtn.MouseButton1Click:Connect(function()
+    for _, v in pairs(game.Lighting:GetChildren()) do if v:IsA("Sky") or v:IsA("Atmosphere") then v:Destroy() end end
+    local sky = Instance.new("Sky", game.Lighting)
+    sky.SkyboxBk = assetID; sky.SkyboxDn = assetID; sky.SkyboxFt = assetID; sky.SkyboxLf = assetID; sky.SkyboxRt = assetID; sky.SkyboxUp = assetID
+end)
+
+-- 2. Audio 17% + Looped
+AudBtn.MouseButton1Click:Connect(function()
+    local s = Instance.new("Sound", game.Workspace)
+    s.SoundId = audioID
+    s.Volume = 10
+    s.PlaybackSpeed = 0.17 -- KECEPATAN 17%
+    s.Looped = true
+    s:Play()
+end)
+
+-- 3. Decal Spam
+DecBtn.MouseButton1Click:Connect(function()
+    for _, obj in pairs(game.Workspace:GetDescendants()) do
+        if obj:IsA("BasePart") then
+            for _, face in pairs(Enum.NormalId:GetEnumItems()) do
+                local d = Instance.new("Decal", obj); d.Texture = assetID; d.Face = face
+            end
+        end
+    end
+end)
+
+-- 4. Walkspeed 100
+WSBtn.MouseButton1Click:Connect(function()
+    if game.Players.LocalPlayer.Character then game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = 100 end
+end)
+
+-- 5. Noclip
+local noclip = false
+NoclipBtn.MouseButton1Click:Connect(function()
+    noclip = not noclip
+    NoclipBtn.Text = "Noclip: " .. tostring(noclip)
+end)
+game:GetService("RunService").Stepped:Connect(function()
+    if noclip and game.Players.LocalPlayer.Character then
+        for _, v in pairs(game.Players.LocalPlayer.Character:GetDescendants()) do
+            if v:IsA("BasePart") then v.CanCollide = false end
+        end
+    end
+end)
+
+-- 6. Infinite Jump
+game:GetService("UserInputService").JumpRequest:Connect(function()
+    local hum = game.Players.LocalPlayer.Character:FindFirstChildOfClass("Humanoid")
+    if hum then hum:ChangeState("Jumping") end
+end)
+
+-- 7. ESP Player
+ESPBtn.MouseButton1Click:Connect(function()
+    for _, p in pairs(game.Players:GetPlayers()) do
+        if p ~= game.Players.LocalPlayer and p.Character then
+            local h = Instance.new("Highlight", p.Character)
+            h.FillColor = Color3.fromRGB(255, 0, 0)
+        end
+    end
+end)
+
+-- 8. Hint Looping
+HintBtn.MouseButton1Click:Connect(function()
+    task.spawn(function()
+        while task.wait(0.5) do
+            local h = Instance.new("Hint", game.Workspace)
+            h.Text = "team c00lkid today"
+            task.wait(0.5)
+            h:Destroy()
+        end
+    end)
+end)
+
+-- 9. Random TP
+TPBtn.MouseButton1Click:Connect(function()
+    local plrs = game.Players:GetPlayers()
+    if #plrs > 1 then
+        local target = plrs[math.random(1, #plrs)]
+        while target == game.Players.LocalPlayer do target = plrs[math.random(1, #plrs)] end
+        if target.Character then
+            game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = target.Character.HumanoidRootPart.CFrame
+        end
+    end
+end)
